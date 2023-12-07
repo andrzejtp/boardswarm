@@ -85,6 +85,8 @@ jobs:
             CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
           EOF
           echo "============== HI =================="
+          env
+          echo "============== HI =================="
           cat "$GITHUB_ENV"
       - name: build
         run: env && cargo build --release
