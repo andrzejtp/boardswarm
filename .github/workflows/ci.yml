@@ -83,13 +83,16 @@ jobs:
           EOF
       - name: build
         run: cargo build --release --target ${{matrix.arch.triplet }}
-      - name: upload
+      - name: upload server
         uses: actions/upload-artifact@v3
         with:
-          name: ${{matrix.arch.debian}}
-          path: |
-            target/*/release/boardswarm
-            target/*/release/boardswarm-cli
+          name: ${{matrix.arch.debian}} boardswarm
+          path: target/${{matrix.arch.triplet}}/release/boardswarm
+      - name: upload cli
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{matrix.arch.debian}} boardswarm-cli
+          path: target/${{matrix.arch.triplet}}/release/boardswarm-cli
 
   allgreen:
     if: always()
