@@ -64,13 +64,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Add ${matrix.arch} architecture
-        run: dpkg --add-architecture ${{matrix.arch}}
+        run: dpkg --add-architecture ${{matrix.arch.debian}}
       - name: Install build-depends
         run:
           apt update && apt install -y
             protobuf-compiler
-            libudev-dev:${{matrix.arch}}
-            libssl-dev:${{matrix.arch}}
+            libudev-dev:${{matrix.arch.debian}}
+            libssl-dev:${{matrix.arch.debian}}
       - name: Setup arm64 environment
         if: matrix.arch == 'arm64'
         run: |
