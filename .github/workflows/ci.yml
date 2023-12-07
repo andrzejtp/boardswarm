@@ -51,7 +51,7 @@ jobs:
           components: clippy
       - run: cargo check -Z direct-minimal-versions
 
-  release builds:
+  release-builds:
     strategy:
       matrix:
         arch:
