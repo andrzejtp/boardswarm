@@ -85,9 +85,10 @@ jobs:
         run: cargo build --release --target ${{matrix.arch.triplet }}
       - name: upload
         uses: actions/upload-artifact@v3
-        path: |
-          target/*/release/boardswarm
-          target/*/release/boardswarm-cli
+        with:
+          path: |
+            target/*/release/boardswarm
+            target/*/release/boardswarm-cli
 
   allgreen:
     if: always()
