@@ -72,7 +72,7 @@ jobs:
             libudev-dev:${{matrix.arch.debian}}
             libssl-dev:${{matrix.arch.debian}}
       - name: Setup arm64 environment
-        if: matrix.arch == 'arm64'
+        if: matrix.arch.debian == 'arm64'
         run: |
           rustup target add aarch64-unknown-linux-gnu
           apt install -y gcc-aarch64-linux-gnu
