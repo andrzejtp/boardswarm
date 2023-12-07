@@ -55,8 +55,8 @@ jobs:
     strategy:
       matrix:
         arch:
-          - arm64
-          - amd64
+          - {debian: "arm64", "triplet": aarch64-unknown-linux-gnu}
+          - {debian: "amd64", "triplet": x86_64-unknown-linux-gnu}
     name: Release builds
     runs-on: ubuntu-latest
     container:
@@ -71,25 +71,23 @@ jobs:
             protobuf-compiler
             libudev-dev:${{matrix.arch}}
             libssl-dev:${{matrix.arch}}
-      - name: target rust arch support
-        run:
-          rustup target add aarch64-unknown-linux-gnu
       - name: Setup arm64 environment
         if: matrix.arch == 'arm64'
         run: |
+          rustup target add aarch64-unknown-linux-gnu
           apt install -y gcc-aarch64-linux-gnu
           cat << EOF >> "$GITHUB_ENV"
           PKG_CONFIG_PATH_aarch64_unknown_linux_gnu=/usr/lib/aarch64-linux-gnu/pkgconfig
           PKG_CONFIG_ALLOW_CROSS=1
-          CARGO_BUILD_TARGET=aarch64-unknown-linux-gnu
           CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
           EOF
-          echo "============== HI =================="
-          env
-          echo "============== HI =================="
-          cat "$GITHUB_ENV"
       - name: build
-        run: env && cargo build --release
+        run: cargo build --release --target ${{matrix.arch.triplet }}
+      - name: upload
+        uses: actions/upload-artifact@v3
+        path: |
+          target/*/release/boardswarm
+          target/*/release/boardswarm-cli
 
   allgreen:
     if: always()
