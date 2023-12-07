@@ -2,7 +2,7 @@ name: test suite
 on:
   push:
     branches-ignore:
-        - "gh-readonly-queue/**"
+      - "gh-readonly-queue/**"
   pull_request:
   merge_group:
 
@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.70.0
         with:
-            components: rustfmt
+          components: rustfmt
       - run: cargo fmt --all --check
 
   clippy:
@@ -36,7 +36,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@1.70.0
         with:
-            components: clippy
+          components: clippy
       - run: cargo clippy --all-targets -- -D warnings
 
   minimal-dependencies:
@@ -48,19 +48,19 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@nightly
         with:
-            components: clippy
+          components: clippy
       - run: cargo check -Z direct-minimal-versions
 
   allgreen:
     if: always()
     needs:
-    - test
-    - fmt
-    - clippy
-    - minimal-dependencies
+      - test
+      - fmt
+      - clippy
+      - minimal-dependencies
     runs-on: Ubuntu-latest
     steps:
-    - name: Decide whether the needed jobs succeeded or failed
-      uses: re-actors/alls-green@release/v1
-      with:
-        jobs: ${{ toJSON(needs) }}
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}
