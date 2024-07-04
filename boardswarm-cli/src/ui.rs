@@ -24,16 +24,16 @@ const COLUMNS: u16 = 80u16;
 const ROWS: u16 = 24u16;
 
 #[derive(Clone)]
-pub enum TerminalMode {
-    NonFunctioning(String),
-    Functioning(String),
-    Alternate(String),
+pub enum DeviceMode {
+    Off(String),
+    On(String),
+    Other(String),
 }
 
 struct Terminal {
     parser: vt100::Parser,
     tui: TuiTerminal<CrosstermBackend<std::io::Stdout>>,
-    terminal_mode: Option<TerminalMode>,
+    terminal_mode: Option<DeviceMode>,
     message: Option<String>,
 }
 
@@ -70,18 +70,18 @@ impl Terminal {
         self.parser.set_scrollback(0)
     }
 
-    fn set_functioning(&mut self, str: String) {
-        self.terminal_mode = Some(TerminalMode::Functioning(str));
+    fn set_on(&mut self, str: String) {
+        self.terminal_mode = Some(DeviceMode::On(str));
         self.message = None;
     }
 
-    fn set_non_functioning(&mut self, str: String) {
-        self.terminal_mode = Some(TerminalMode::NonFunctioning(str));
+    fn set_off(&mut self, str: String) {
+        self.terminal_mode = Some(DeviceMode::Off(str));
         self.message = None;
     }
 
-    fn set_alternate(&mut self, str: String) {
-        self.terminal_mode = Some(TerminalMode::Alternate(str));
+    fn set_other(&mut self, str: String) {
+        self.terminal_mode = Some(DeviceMode::Other(str));
         self.message = None;
     }
 
@@ -115,17 +115,17 @@ impl Terminal {
 
                 let (style, text) = match terminal_mode {
                     Some(terminal_mode) => match terminal_mode {
-                        TerminalMode::NonFunctioning(s) => {
+                        DeviceMode::Off(s) => {
                             (Style::reset().fg(Color::Black).bg(Color::LightRed), s)
                         }
-                        TerminalMode::Functioning(s) => {
+                        DeviceMode::On(s) => {
                             (Style::reset().fg(Color::Black).bg(Color::LightGreen), s)
                         }
-                        TerminalMode::Alternate(s) => {
+                        DeviceMode::Other(s) => {
                             (Style::reset().fg(Color::Black).bg(Color::LightMagenta), s)
                         }
                     },
-                    None => (Style::reset(), "UNKNOWN".to_string()),
+                    None => (Style::reset(), "Unknown".to_string()),
                 };
                 let mode_block = Block::default().style(style);
                 let mode = Paragraph::new(text).block(mode_block);
@@ -302,9 +302,9 @@ pub async fn run_ui(
                 Some(new_state) = state_rx.recv() => {
                     let state: String = new_state;
                     match state.as_str() {
-                        "on" => terminal.set_functioning("ON".to_string()),
-                        "off" => terminal.set_non_functioning("OFF".to_string()),
-                        other => terminal.set_alternate(other.to_uppercase()),
+                        "on" => terminal.set_on("On".to_string()),
+                        "off" => terminal.set_off("Off".to_string()),
+                        other => terminal.set_other(other.to_string()),
                     }
                 }
             }
