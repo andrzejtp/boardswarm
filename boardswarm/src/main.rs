@@ -31,6 +31,7 @@ mod pdudaemon;
 mod registry;
 mod rockusb;
 mod serial;
+mod vserial;
 mod udev;
 mod utils;
 
@@ -994,6 +995,9 @@ async fn main() -> anyhow::Result<()> {
             }
             serial::PROVIDER => {
                 local.spawn_local(serial::start_provider(p.name, server.clone()));
+            }
+            vserial::PROVIDER => {
+                local.spawn_local(vserial::start_provider(p.name, server.clone()));
             }
             gpio::PROVIDER => {
                 local.spawn_local(gpio::start_provider(
